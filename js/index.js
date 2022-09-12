@@ -14,7 +14,8 @@ const createTbody = datos =>
     {
         const table = document.getElementById('tablaEstudiantes');
 
-        if (table.querySelector('tbody')) {
+        if (table.querySelector('tbody'))
+        {
             //ya existe un tbody
             table.querySelector('tbody').remove();
         }
@@ -22,6 +23,9 @@ const createTbody = datos =>
         let tbody = document.createElement('tbody');
 
         cadena = ''
+        console.log(datos)
+        console.log(typeof(datos))
+
         datos.forEach(dato =>
             cadena += `<tr>
                 <th scope="row">${dato.id}</th>
@@ -134,4 +138,22 @@ btn_save_changes.addEventListener('click', () =>
 
     mostrarTabla();
 
+})
+
+form_navbar = document.getElementById('form-navbar')
+form_navbar.addEventListener('submit', element =>{
+    element.preventDefault();
+    console.log (element.target.id.value)
+    axios.get(URL_estudiante +`?id=${element.target.id.value}`)
+    .then(response =>
+        {
+            if(response.data){
+                registros = []
+                registros.push(response.data)
+                createTbody(registros)
+            }else{console.log("no existe registro")}
+            element.target.id.value =""
+        })
+    .catch(error => console.error(error))
+    .then(() => console.log("Peticion GET Finalizada"))
 })
