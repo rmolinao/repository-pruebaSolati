@@ -1,6 +1,6 @@
 // solicitud GET con Axios
 const URL_estudiante = `http://localhost:3000/API/estudiantes.php`
-
+let id_select
 
 const mostrarTabla = () =>
     {
@@ -10,10 +10,9 @@ const mostrarTabla = () =>
             .then(() => console.log("Peticion GET Finalizada"))//esta instruccion siempre se ejcuta;
     }
 
-var table
 const createTbody = datos =>
     {
-        table = document.getElementById('tablaEstudiantes');
+        const table = document.getElementById('tablaEstudiantes');
 
         if (table.querySelector('tbody')) {
             //ya existe un tbody
@@ -32,8 +31,8 @@ const createTbody = datos =>
                 <td>${dato.email}</td>
 
                 <td>
-                    <a class="text-success" href="#">
-                        <i class="bi bi-pencil-square"></i>
+                    <a class="text-success" href="#" onclick="selectRegister(${dato.id})" data-bs-toggle="modal" data-bs-target="#editarestudiante">
+                        <i class="bi bi-pencil-square" ></i>
                     </a>
                 </td>
 
@@ -63,7 +62,8 @@ const limpiarCampos = target =>
 
 formEstudiantes = document.getElementById('form-estudiantes');
 
-formEstudiantes.addEventListener('submit', element => {
+formEstudiantes.addEventListener('submit', element =>
+{
     element.preventDefault();
     const target = element.target;
 
@@ -83,6 +83,7 @@ formEstudiantes.addEventListener('submit', element => {
 
     limpiarCampos(target);
     mostrarTabla();
+
 })
 
 const eliminar = id =>
@@ -95,3 +96,42 @@ const eliminar = id =>
         .then(() => console.log("Peticion DELETE Finalizada"))
         mostrarTabla();
 };
+
+const selectRegister = (id) =>
+{
+    id_select = id
+    console.log(`editarndo el elemento ${id}`)
+    axios.get(URL_estudiante +`?id=${id}`)
+    .then(response =>
+        {
+            document.getElementById('udta-nombre').value = response.data.nombre;
+            document.getElementById('udta-paterno').value = response.data.paterno;
+            document.getElementById('udta-materno').value = response.data.materno;
+            document.getElementById('udta-email').value = response.data.email;
+        })
+    .catch(error => console.error(error))
+    .then(() => console.log("Peticion GET Finalizada"))
+}
+
+const btn_save_changes = document.getElementById('btn-save-changes')
+btn_save_changes.addEventListener('click', () =>
+{
+    console.log('clic boton save changes '+id_select)
+
+    data =
+    {
+        "nombre": document.getElementById('udta-nombre').value,
+        "paterno": document.getElementById('udta-paterno').value,
+        "materno": document.getElementById('udta-materno').value,
+        "email": document.getElementById('udta-email').value
+    }
+
+    //peticion HTTP
+    axios.put(URL_estudiante+`?id=${id_select}`,data)
+    .then(response => console.log(response))
+    .catch(error => console.error(error))
+    .then(() => console.log("Peticion PUT Finalizada"))
+
+    mostrarTabla();
+
+})
