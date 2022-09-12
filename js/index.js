@@ -10,34 +10,41 @@ const mostrarTabla = () =>
             .then(() => console.log("Peticion GET Finalizada"))//esta instruccion siempre se ejcuta;
     }
 
-
+var table
 const createTbody = datos =>
     {
-        const table = document.getElementById('tablaEstudiantes');
+        table = document.getElementById('tablaEstudiantes');
 
         if (table.querySelector('tbody')) {
-            console.log('ya exite un tbody')
+            //ya existe un tbody
             table.querySelector('tbody').remove();
         }
 
         let tbody = document.createElement('tbody');
 
-
-        tr = datos.map(dato =>
-            `<tr>
+        cadena = ''
+        datos.forEach(dato =>
+            cadena += `<tr>
                 <th scope="row">${dato.id}</th>
                 <td>${dato.nombre}</td>
                 <td>${dato.paterno}</td>
                 <td>${dato.materno}</td>
                 <td>${dato.email}</td>
+
+                <td>
+                    <a class="text-success" href="#">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                </td>
+
+                <td>
+                    <a class="text-danger" href="#" onclick="eliminar(${dato.id})">
+                        <i class="bi bi-trash3"></i>
+                    </a>
+                </td>
+
             </tr>`
         );
-
-        //dibujo en una cadena de texto HTML las tablas
-        cadena = ''
-        tr.forEach(element => {
-            cadena = cadena + element;
-        });
 
         tbody.innerHTML  = cadena;
         table.appendChild(tbody);
@@ -59,10 +66,7 @@ formEstudiantes = document.getElementById('form-estudiantes');
 formEstudiantes.addEventListener('submit', element => {
     element.preventDefault();
     const target = element.target;
-    console.log(target.nombre.value);
-    console.log(target.paterno.value);
-    console.log(target.materno.value);
-    console.log(target.email.value);
+
     data =
     {
         "nombre": target.nombre.value,
@@ -81,5 +85,13 @@ formEstudiantes.addEventListener('submit', element => {
     mostrarTabla();
 })
 
-
-
+const eliminar = id =>
+{
+    console.log(`eliminar el elemento ${id}`)
+        //peticion HTTP
+        axios.delete(URL_estudiante +`?id=${id}`)
+        .then(response => console.log(response))
+        .catch(error => console.error(error))
+        .then(() => console.log("Peticion DELETE Finalizada"))
+        mostrarTabla();
+};
