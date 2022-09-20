@@ -157,3 +157,9 @@ form_navbar.addEventListener('submit', element =>{
     .catch(error => console.error(error))
     .then(() => console.log("Peticion GET Finalizada"))
 })
+
+todos = document.getElementById('mostrartodos')
+todos.addEventListener('click',element =>{
+    element.preventDefault();
+    mostrarTabla();
+})
